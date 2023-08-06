@@ -12,7 +12,7 @@ def make_coffee(_order):
     resources['water'] -= data.MENU[_order]["ingredients"]["water"]
     resources['milk'] -= data.MENU[_order]["ingredients"]["milk"]
     resources['coffee'] -= data.MENU[_order]["ingredients"]["coffee"]
-    print(f"Here, your {_order}. Guten Appetit!")
+    print(f"Here, your {_order} ☕. Guten Appetit!")
 
 
 def cash_handling(_coffee_cost: float):
@@ -31,54 +31,55 @@ def cash_handling(_coffee_cost: float):
         return True, f"€{str(round(money - _coffee_cost, 2))}"
 
 
-def is_sufficient(_order):
+def is_ingredients_sufficient(_order):
     sufficient = True
-    error_report: str = "insufficient amount of \n"
+    error_report: str = "*** Insufficient amount of"
     water_ordered = data.MENU[_order]["ingredients"]["water"]
     milk_ordered = data.MENU[_order]["ingredients"]["milk"]
     coffee_ordered = data.MENU[_order]["ingredients"]["coffee"]
     if resources['water'] < water_ordered:
-        error_report += f"water, required {water_ordered} but remained {resources['water']}"
+        error_report += f"\nwater, required {water_ordered} but remained {resources['water']}"
         sufficient = False
     if resources['milk'] < milk_ordered:
-        error_report += f"milk, required {milk_ordered} but remained {resources['milk']}"
+        error_report += f"\nmilk, required {milk_ordered} but remained {resources['milk']}"
         sufficient = False
     if resources['coffee'] < coffee_ordered:
-        error_report += f"coffee, required {coffee_ordered} but remained {resources['coffee']}"
+        error_report += f"\ncoffee, required {coffee_ordered} but remained {resources['coffee']}"
         sufficient = False
     return sufficient, error_report
 
 
-"""Get order of a customer"""
-valid = False
-while not valid:
-    order = input("What would you like? (espresso, latte, cappuccino): ")
-    if order in data.MENU:
-        valid = True
-    elif order == "off":
-        exit()
-    elif order == "report":
-        print(print_report())
-    else:
-        print("Sorry, we do not have that")
+while True:
+    """Get order of a customer"""
+    valid = False
+    while not valid:
+        order = input("What would you like? (espresso, latte, cappuccino): ")
+        if order in data.MENU:
+            valid = True
+        elif order == "off":
+            exit()
+        elif order == "report":
+            print(print_report())
+        else:
+            print("Sorry, we do not have that")
 
 
-"""take money"""
-valid = False
-while not valid:
-    cash_handling_output = cash_handling(data.MENU[order]['cost'])
-    if cash_handling_output[0] == False:
-        print(f"Insufficient money, return {cash_handling_output[1]}")
-        print(f"Please try again")
+    """make coffee"""
+    is_ingredients_sufficient_output = is_ingredients_sufficient(order)
+    if is_ingredients_sufficient_output[0]:
+        """take money"""
+        valid = False
+        while not valid:
+            cash_handling_output = cash_handling(data.MENU[order]['cost'])
+            if cash_handling_output[0] == False:
+                print(f"Insufficient money, return {cash_handling_output[1]}")
+                print(f"Please try again")
+            else:
+                valid = True
+        print(f"Transaction success, exchange {cash_handling_output[1]}")
+        make_coffee(order)
     else:
-        valid = True
-"""make coffee"""
-is_sufficient_output = is_sufficient(order)
-if is_sufficient_output[0]:
-    print(f"Transaction success, exchange {cash_handling_output[1]}")
-    make_coffee(order)
-else:
-    print(is_sufficient_output[1])
-print(print_report())
+        print(is_ingredients_sufficient_output[1])
+    print(print_report())
 
 
