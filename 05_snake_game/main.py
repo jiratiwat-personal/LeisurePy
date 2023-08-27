@@ -33,7 +33,8 @@ while on:
         snake.ate = True
         scoreboard.get_score()
 
-    if snake.snakeHead.pos()[0] > 280 or snake.snakeHead.pos()[0] < -280 or snake.snakeHead.pos()[1] < -280 or snake.snakeHead.pos()[1] > 280:
+    if snake.snakeHead.pos()[0] > 280 or snake.snakeHead.pos()[0] < -280 or snake.snakeHead.pos()[1] < -280 \
+            or snake.snakeHead.pos()[1] > 280:
         on = False
         scoreboard.print_gameover()
 
